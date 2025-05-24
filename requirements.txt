@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-httpx
-python-jose
-python-dotenv
-sqlalchemy
-alembic
-psycopg2-binary
