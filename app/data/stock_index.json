@@ -1,0 +1,4 @@
+[
+    {"Ticker":"NDX","Name":"NASDAQ 100", "query": "NDX OR NASDAQ+100"},
+	{"Ticker":"SPX","Name":"S&P 500", "query": "SPX OR S&P+500"}
+]

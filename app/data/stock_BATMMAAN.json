@@ -1,0 +1,10 @@
+[
+	{"Ticker":"MSFT","Name":"마이크로소프트", "query": "microsoft OR msft"},
+	{"Ticker":"NVDA","Name":"엔비디아", "query": "nvidia OR nvda"},
+	{"Ticker":"AAPL","Name":"애플", "query": "apple OR aapl"},
+	{"Ticker":"AMZN","Name":"아마존", "query": "amazon OR amzn"},
+	{"Ticker":"GOOGL","Name":"알파벳", "query": "alphabet OR google OR googl"},
+	{"Ticker":"META","Name":"메타", "query": "meta OR facebook"},
+	{"Ticker":"TSLA","Name":"테슬라", "query": "tesla OR tsla"},
+	{"Ticker":"AVGO","Name":"브로드컴", "query": "broadcom OR avgo"}
+]
