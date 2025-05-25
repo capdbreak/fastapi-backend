@@ -28,28 +28,29 @@ async def get_summaries_for_user(user: User, db: Session) -> List[Dict]:
     logger.info(f"Interested tickers for user {user.id}: {tickers}")
 
     for ticker in tickers:
-        articles = (
-            db.query(NewsArticle)
+        # Query both NewsArticle and LLMNews
+        results = (
+            db.query(NewsArticle, LLMNews)
             .join(LLMNews, NewsArticle.id == LLMNews.id)
-            .filter(NewsArticle.ticker == ticker)  # Explicitly specify which table
+            .filter(NewsArticle.ticker == ticker)
             .order_by(NewsArticle.id.desc())
             .limit(ARTICLES_PER_TICKER)
             .all()
         )
-        logger.info(f"Retrieved {len(articles)} news articles for ticker {ticker}")
+        logger.info(f"Retrieved {len(results)} news articles for ticker {ticker}")
 
-        if not articles:
+        if not results:
             continue
 
-        for i in range(len(articles)):
+        for article, llm_news in results:
             summaries.append(
                 {
                     "ticker": ticker,
-                    "title": articles[i].title,
-                    "summary": articles[i].summary,
-                    "importance": articles[i].importance,
-                    "arousal": articles[i].arousal,
-                    "valence": articles[i].valence,
+                    "title": article.title,
+                    "summary": article.summary,
+                    "importance": llm_news.importance,
+                    "arousal": llm_news.arousal,
+                    "valence": llm_news.valence,
                 }
             )
 
