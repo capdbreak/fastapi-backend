@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from fastapi import BackgroundTasks, FastAPI
 from fastapi_utilities import repeat_at, repeat_every
@@ -53,7 +54,7 @@ async def send_newsletter():
             html = f"<p>{body.replace('\n', '<br>')}</p>"
             fm = FastMail(conf)
             message = MessageSchema(
-                subject="오늘의 요약 뉴스",
+                subject=f'{user.name}님을 위한 {datetime.now().strftime("%Y-%m-%d")} 뉴스레터',
                 recipients=[user.email],
                 body=html,
                 subtype=MessageType.html,
