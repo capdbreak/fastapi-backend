@@ -40,7 +40,6 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
     responses = []
     for article in articles:
         llm = db.query(LLMNews).filter(LLMNews.id == article.id).first()
-        llm_data = LLMAnalysis.model_validate(llm) if llm else None
 
         response = NewsResponse(
             id=article.id,
@@ -50,11 +49,13 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
             article=article.article,
             real_url=article.real_url,
             summary=article.summary,
-            llm_analysis=llm_data,
+            subject=llm.subject if llm else None,
+            valence=llm.valence if llm else None,
+            arousal=llm.arousal if llm else None,
+            importance=llm.importance if llm else None,
         )
         responses.append(response)
     return responses
-
 
 @router.get("/{ticker}", response_model=list[NewsResponse])
 def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
@@ -68,7 +69,6 @@ def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
     responses = []
     for article in articles:
         llm = db.query(LLMNews).filter(LLMNews.id == article.id).first()
-        llm_data = LLMAnalysis.model_validate(llm) if llm else None
 
         response = NewsResponse(
             id=article.id,
@@ -78,7 +78,12 @@ def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
             article=article.article,
             real_url=article.real_url,
             summary=article.summary,
-            llm_analysis=llm_data,
+            subject=llm.subject if llm else None,
+            valence=llm.valence if llm else None,
+            arousal=llm.arousal if llm else None,
+            importance=llm.importance if llm else None,
         )
         responses.append(response)
+
     return responses
+
