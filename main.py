@@ -11,7 +11,6 @@ from app.mail import send_test_email
 from fastapi_utilities import repeat_every
 
 import app.create_tables
-app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -42,3 +41,5 @@ async def lifespan(app: FastAPI):
 @repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
 async def _startup_send_test_email():
     await send_test_email()
+
+app = FastAPI(lifespan=lifespan)
