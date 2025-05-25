@@ -1,10 +1,7 @@
 from app.database import Base, engine, SessionLocal
 from app.models import (
-    User,
     StockIndex,
     StockBATMMAAN,
-    user_index_interest,
-    user_stock_interest,
 )
 import json
 import os

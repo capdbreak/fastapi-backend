@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 from datetime import datetime
-from app.schemas import NewsResponse, LLMAnalysis
+from app.schemas import NewsResponse
 from app.models import NewsArticle, LLMNews
 from app.database import get_db
 
@@ -57,6 +56,7 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
         responses.append(response)
     return responses
 
+
 @router.get("/{ticker}", response_model=list[NewsResponse])
 def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
     articles = (
@@ -86,4 +86,3 @@ def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
         responses.append(response)
 
     return responses
-

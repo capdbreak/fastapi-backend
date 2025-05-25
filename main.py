@@ -18,6 +18,7 @@ async def lifespan(app: FastAPI):
     await send_test_email()
     yield
 
+
 app = FastAPI(lifespan=lifespan)
 
 
@@ -27,7 +28,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://34.22.108.245:3000",
         "https://capdbreak-finance-flow.uk",
-        "https:/api.capdbreak-finance-flow.uk"
+        "https:/api.capdbreak-finance-flow.uk",
     ],
     allow_credentials=True,
     allow_methods=["*"],

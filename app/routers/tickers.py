@@ -6,8 +6,11 @@ from fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
 
+
 @router.get("/tickers")
-def get_tickers(type: str = Query(..., pattern="^(index|stock)$"), db: Session = Depends(get_db)):
+def get_tickers(
+    type: str = Query(..., pattern="^(index|stock)$"), db: Session = Depends(get_db)
+):
     """
     사용자의 관심 종목 목록을 제공하는 API
     - 'type=index' → stock_index 테이블에서 모든 인덱스 종목 조회

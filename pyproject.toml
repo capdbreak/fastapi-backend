@@ -21,3 +21,8 @@ dependencies = [
 dev = [
   "factory-boy",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.11",
+]
