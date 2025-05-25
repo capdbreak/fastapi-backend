@@ -7,7 +7,9 @@ from app.routers.auth_register import router as register_router
 from app.routers.stock_routes import router as stock_router
 from app.routers import tickers
 from app.routers.news import router as news_router
-from app.mail import test
+from app.mail import send_test_email
+from fastapi_utilities import repeat_every
+
 import app.create_tables
 app = FastAPI()
 
@@ -36,3 +38,7 @@ async def lifespan(app: FastAPI):
     # --- startup ---
     await test()
     yield
+
+@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
+async def _startup_send_test_email():
+    await send_test_email()
