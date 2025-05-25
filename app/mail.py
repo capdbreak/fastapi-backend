@@ -20,7 +20,7 @@ conf = ConnectionConfig(
     USE_CREDENTIALS = True,
     VALIDATE_CERTS = True
 )
-logger = logging.getLogger(_name__)
+logger = logging.getLogger(__name__)
 @repeat_every(seconds=60 * 60 * 24, logger=logger, raise_exceptions=True)
 async def test():
     html = """<p>Hi this test mail, thanks for using Fastapi-mail</p> """
