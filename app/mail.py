@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import BackgroundTasks, FastAPI
-from fastapi_utilities import repeat_at
+from fastapi_utilities import repeat_at, repeat_every
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from pydantic import BaseModel, EmailStr
 from os import getenv
@@ -38,7 +38,8 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
 
 db = get_db()
 
-@repeat_at(cron="0 0 * * *", raise_exceptions=True)
+#@repeat_at(cron="0 0 * * *", raise_exceptions=True)
+@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)  # Run once a day
 async def send_newsletter():
     """
     Sends a test email to the address specified in TEST_EMAIL env var.
