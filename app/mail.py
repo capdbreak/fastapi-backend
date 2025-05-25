@@ -36,18 +36,17 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
     return "\n".join(lines)
 
 
-db = get_db()
-
 #@repeat_at(cron="0 0 * * *", raise_exceptions=True)
 @repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)  # Run once a day
 async def send_newsletter():
     """
     Sends a test email to the address specified in TEST_EMAIL env var.
     """
-    user_list = db.query(User).filter(User.email_opt_in == True).all()
+    db_session = next(get_db())
+    user_list = db_session.query(User).filter(User.email_opt_in == True).all()
 
     for user in user_list:
-        summaries = get_summaries_for_user(user, db)
+        summaries = get_summaries_for_user(user, db_session)
         if summaries:
             body = build_email_body(user.name, summaries)
             html = f"<p>{body.replace('\n', '<br>')}</p>"
