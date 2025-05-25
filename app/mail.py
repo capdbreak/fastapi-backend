@@ -20,7 +20,7 @@ conf = ConnectionConfig(
     VALIDATE_CERTS = True
 )
 
-@repeat_every(hours=1, minutes=0, seconds=0, wait_first=True)
+@repeat_every(seconds=60 * 60 * 24)  # every 24 hours
 async def test():
     html = """<p>Hi this test mail, thanks for using Fastapi-mail</p> """
     message = MessageSchema(
