@@ -30,7 +30,7 @@ async def get_summaries_for_user(user: User, db: Session) -> List[Dict]:
     for ticker in tickers:
         articles = (
             db.query(NewsArticle)
-            .join(LLMNews, NewsArticle.ticker == LLMNews.ticker)
+            .join(LLMNews, NewsArticle.id == LLMNews.id)
             .filter_by(ticker=ticker)
             .order_by(NewsArticle.id.desc())
             .limit(ARTICLES_PER_TICKER)
