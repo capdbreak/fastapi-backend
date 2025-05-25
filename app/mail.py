@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import BackgroundTasks, FastAPI
+from fastapi_utilities import repeat_every
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from pydantic import BaseModel, EmailStr
 from os import getenv
@@ -21,6 +22,7 @@ conf = ConnectionConfig(
 )
 logger = logging.getLogger(__name__)
 
+@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
 async def send_test_email():
     """
     Sends a test email to the address specified in TEST_EMAIL env var.
