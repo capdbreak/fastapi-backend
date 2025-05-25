@@ -35,18 +35,18 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
     lines.append("좋은 하루 보내세요!")
     return "\n".join(lines)
 
-
+db = get_db()
 #@repeat_at(cron="0 0 * * *", raise_exceptions=True)
 @repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)  # Run once a day
 async def send_newsletter():
     """
     Sends a test email to the address specified in TEST_EMAIL env var.
     """
-    db_session = next(get_db())
+    db_session = next(db)
     user_list = db_session.query(User).filter(User.email_opt_in == True).all()
 
     for user in user_list:
-        summaries = get_summaries_for_user(user, db_session)
+        summaries = await get_summaries_for_user(user, db_session)
         if summaries:
             body = build_email_body(user.name, summaries)
             html = f"<p>{body.replace('\n', '<br>')}</p>"
