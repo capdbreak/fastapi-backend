@@ -12,6 +12,20 @@ from fastapi_utilities import repeat_every
 
 import app.create_tables
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # --- startup ---
+    await _startup_send_test_email()
+    yield
+
+@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
+async def _startup_send_test_email():
+    await send_test_email()
+
+app = FastAPI(lifespan=lifespan)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -31,15 +45,3 @@ app.include_router(register_router)
 app.include_router(stock_router)
 app.include_router(tickers.router)
 app.include_router(news_router)
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # --- startup ---
-    await _startup_send_test_email()
-    yield
-
-@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
-async def _startup_send_test_email():
-    await send_test_email()
-
-app = FastAPI(lifespan=lifespan)
