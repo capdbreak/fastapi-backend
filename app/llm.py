@@ -3,7 +3,7 @@ import logging
 from typing import List, Dict
 import httpx
 from sqlalchemy.orm import Session
-from app.models import User, user_index_interest, user_stock_interest, NewsArticle
+from app.models import LLMNews, User, user_index_interest, user_stock_interest, NewsArticle
 
 LLM_BACKEND_URL = os.getenv("LLM_SERVER_URL")
 ARTICLES_PER_TICKER = 10  # Number of articles to fetch per ticker
@@ -30,6 +30,7 @@ async def get_summaries_for_user(user: User, db: Session) -> List[Dict]:
     for ticker in tickers:
         articles = (
             db.query(NewsArticle)
+            .join(LLMNews, NewsArticle.ticker == LLMNews.ticker)
             .filter_by(ticker=ticker)
             .order_by(NewsArticle.id.desc())
             .limit(ARTICLES_PER_TICKER)
@@ -40,40 +41,18 @@ async def get_summaries_for_user(user: User, db: Session) -> List[Dict]:
         if not articles:
             continue
 
-        payload = {
-            "subject": ticker,
-            "articles": [{"title": a.title, "article": a.article} for a in articles],
-        }
+        for i in range(len(articles)):
+            summaries.append(
+                {
+                    "ticker": ticker,
+                    "title": articles[i].title,
+                    "summary": articles[i].summary,
+                    "importance": articles[i].importance,
+                    "arousal": articles[i].arousal,
+                    "valence": articles[i].valence,
+                }
+            )
 
-        try:
-            async with httpx.AsyncClient() as client:
-                res = await client.post(LLM_BACKEND_URL, json=payload, timeout=10)
-                data = res.json()
-
-            for i, result in enumerate(data.get("results", [])):
-                summaries.append(
-                    {
-                        "ticker": ticker,
-                        "title": articles[i].title if i < len(articles) else "",
-                        "summary": result.get("summary", ""),
-                        "importance": result.get("importance", 0),
-                        "arousal": result.get("arousal", 0),
-                        "valence": result.get("valence", 0),
-                    }
-                )
-
-        except httpx.RequestError as e:
-            logger.error(f"LLM request error for ticker '{ticker}': {e}")
-        except httpx.HTTPStatusError as e:
-            if e.response.status_code == 504:
-                logger.error(f"LLM request timed out for ticker '{ticker}'")
-            else:
-                logger.error(
-                    f"LLM request failed for ticker '{ticker}': {e.response.status_code} - {e.response.text}"
-                )
-        except Exception as e:
-            logger.error(f"Unexpected error while processing ticker '{ticker}': {e}")
-    logger.info(f"Total summaries collected: {len(summaries)}")
     return select_best_summaries(
         summaries,
         min_len=SUMMARY_MIN_LEN,
