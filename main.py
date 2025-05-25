@@ -7,7 +7,7 @@ from app.routers.auth_register import router as register_router
 from app.routers.stock_routes import router as stock_router
 from app.routers import tickers
 from app.routers.news import router as news_router
-from app.mail import send_test_email
+from app.mail import send_newsletter
 
 import app.create_tables
 
@@ -15,7 +15,7 @@ import app.create_tables
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- startup ---
-    await send_test_email()
+    await send_newsletter()
     yield
 
 
