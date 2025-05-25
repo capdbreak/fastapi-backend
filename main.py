@@ -36,7 +36,7 @@ app.include_router(news_router)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- startup ---
-    await test()
+    await _startup_send_test_email()
     yield
 
 @repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
