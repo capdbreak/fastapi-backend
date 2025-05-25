@@ -36,8 +36,9 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
     return "\n".join(lines)
 
 db = get_db()
-#@repeat_at(cron="0 0 * * *", raise_exceptions=True)
-@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)  # Run once a day
+
+#@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)  # Run once a day
+@repeat_at(cron="0 0 * * *", raise_exceptions=True)
 async def send_newsletter():
     """
     Sends a test email to the address specified in TEST_EMAIL env var.
