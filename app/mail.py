@@ -4,6 +4,7 @@ from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from fastapi_utilities import repeat_every
 from pydantic import BaseModel, EmailStr
 from os import getenv
+import logging
 class EmailSchema(BaseModel):
     email: List[EmailStr]
 
@@ -19,8 +20,8 @@ conf = ConnectionConfig(
     USE_CREDENTIALS = True,
     VALIDATE_CERTS = True
 )
-
-@repeat_every(seconds=60 * 60 * 24)  # every 24 hours
+logger = logging.getLogger(_name__)
+@repeat_every(seconds=60 * 60 * 24, logger=logger, raise_exceptions=True)
 async def test():
     html = """<p>Hi this test mail, thanks for using Fastapi-mail</p> """
     message = MessageSchema(
