@@ -71,6 +71,13 @@ def select_best_summaries(
 
     def summary_len(s: Dict) -> int:
         return len(s.get("summary", ""))
+    
+    def safe_float(value, default=0.0):
+        """Convert string values to float safely"""
+        try:
+            return float(value) if value is not None else default
+        except (ValueError, TypeError):
+            return default
 
     # Filter summaries within length range
     in_range = [s for s in summaries if min_len <= summary_len(s) <= max_len]
@@ -84,9 +91,9 @@ def select_best_summaries(
     # Sort by importance, then arousal, then valence (all descending)
     in_range.sort(
         key=lambda s: (
-            -s.get("importance", 0),
-            -s.get("arousal", 0),
-            -s.get("valence", 0),
+            -safe_float(s.get("importance")),
+            -safe_float(s.get("arousal")),
+            -safe_float(s.get("valence")),
         )
     )
 
