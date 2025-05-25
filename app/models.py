@@ -68,7 +68,6 @@ class NewsArticle(Base):
     title = Column(String)
     article = Column(Text)
     real_url = Column(String)
-    rss_url = Column(String)
     summary = Column(Text, nullable=True)
 
     __table_args__ = (UniqueConstraint("real_url", "title", name="uq_realurl_title"),)
@@ -82,9 +81,3 @@ class LLMNews(Base):
     valence = Column(String)
     arousal = Column(String)
     importance = Column(String)
-
-
-class SeenLink(Base):
-    __tablename__ = "seen_links"
-
-    rss_url = Column(String, primary_key=True)

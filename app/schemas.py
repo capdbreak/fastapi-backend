@@ -9,8 +9,6 @@ class LLMAnalysis(BaseModel):
     arousal: Optional[str]
     importance: Optional[str]
 
-    model_config = {"from_attributes": True}
-
 
 class NewsResponse(BaseModel):
     id: str
@@ -19,7 +17,8 @@ class NewsResponse(BaseModel):
     title: str
     article: str
     real_url: str
-    summary: Optional[str]
-    llm_analysis: Optional[LLMAnalysis]
-
-    model_config = {"from_attributes": True}
+    summary: str | None = None
+    subject: str | None = None
+    valence: str | None = None
+    arousal: str | None = None
+    importance: str | None = None
