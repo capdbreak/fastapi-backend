@@ -1,7 +1,6 @@
 import os
 import logging
 from typing import List, Dict
-import httpx
 from sqlalchemy.orm import Session
 from app.models import LLMNews, User, user_index_interest, user_stock_interest, NewsArticle
 

@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
-from fastapi import BackgroundTasks, FastAPI
-from fastapi_utilities import repeat_at, repeat_every
+from fastapi_utilities import repeat_at
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from pydantic import BaseModel, EmailStr
 from os import getenv
@@ -45,7 +44,7 @@ async def send_newsletter():
     Sends a test email to the address specified in TEST_EMAIL env var.
     """
     db_session = next(db)
-    user_list = db_session.query(User).filter(User.email_opt_in == True).all()
+    user_list = db_session.query(User).filter(User.email_opt_in).all()
 
     for user in user_list:
         summaries = await get_summaries_for_user(user, db_session)

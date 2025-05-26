@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Field
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
@@ -7,14 +8,17 @@ from app.auth import get_current_user
 router = APIRouter(prefix="/settings", tags=["settings"])
 
 
+class NewsletterSettingsRequest(BaseModel):
+    email_opt_in: bool = Field(..., description="뉴스레터 구독 여부")
+
 @router.post("/newsletter", summary="뉴스 레터 구독 설정")
 async def set_email_update(
-    email_opt_in: bool = Body(..., description="뉴스레터 구독 여부"),
+    request: NewsletterSettingsRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """뉴스레터 구독 설정을 업데이트합니다."""
-    current_user.email_opt_in = email_opt_in
+    current_user.email_opt_in = request.email_opt_in
     db.commit()
     db.refresh(current_user)
     
