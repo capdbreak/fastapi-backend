@@ -181,14 +181,14 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>투데이 뉴스레터</title>
+        <title>FinanceFlow 뉴스레터</title>
         {styles}
     </head>
     <body>
         <div class="container">
             <!-- Header -->
             <div class="header">
-                <h1>📈 투데이 뉴스레터</h1>
+                <h1>FinanceFlow 뉴스레터</h1>
                 <div class="date">{current_date}</div>
             </div>
             
@@ -221,7 +221,7 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
             
             <!-- Footer -->
             <div class="footer">
-                <p>📊 <strong>투데이 뉴스레터</strong></p>
+                <p>📊 <strong>FinanceFlow 뉴스레터</strong></p>
                 <p>매일 아침 신선한 뉴스를 전해드립니다</p>
                 <div class="unsubscribe">
                     <p>수신 거부를 원하시면 <a href="mailto:{getenv('MAIL_FROM')}?subject=Unsubscribe">여기를 클릭하세요</a>.</p>
