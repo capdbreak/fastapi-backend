@@ -2,16 +2,33 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
+from app.auth import get_current_user
 
-router = APIRouter(prefix="/settings", tags=["email"])
+router = APIRouter(prefix="/settings", tags=["settings"])
 
 
 @router.post("/newsletter", summary="뉴스 레터 구독 설정")
-def set_email_update(user_token: str, email_opt_in: bool, db: Session = Depends(get_db)):
-    user = db.query(User).filter_by(id=user_token).first()
-    if not user:
-        return {"error": "사용자를 찾을 수 없습니다."}
-    user.email_opt_in = email_opt_in
+async def set_email_update(
+    email_opt_in: bool, 
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """뉴스레터 구독 설정을 업데이트합니다."""
+    current_user.email_opt_in = email_opt_in
     db.commit()
-    return {"message": "뉴스 레터 구독 설정이 업데이트되었습니다.", "email_opt_in": user.email_opt_in, "email": user.email} 
+    db.refresh(current_user)
+    
+    return {
+        "message": "뉴스 레터 구독 설정이 업데이트되었습니다.", 
+        "email_opt_in": current_user.email_opt_in, 
+        "email": current_user.email
+    }
 
+
+@router.get("/newsletter", summary="뉴스 레터 구독 설정 조회")
+async def get_email_settings(current_user: User = Depends(get_current_user)):
+    """현재 뉴스레터 구독 설정을 조회합니다."""
+    return {
+        "email_opt_in": current_user.email_opt_in,
+        "email": current_user.email
+    }
