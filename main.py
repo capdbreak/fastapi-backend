@@ -6,6 +6,7 @@ from app.routers.auth_google import router as google_router
 from app.routers.auth_register import router as register_router
 from app.routers.stock_routes import router as stock_router
 from app.routers.email_update import router as email_update_router
+from app.routers.users import router as users_router
 from app.routers import tickers
 from app.routers.news import router as news_router
 from app.mail import send_newsletter
@@ -50,3 +51,4 @@ app.include_router(stock_router)
 app.include_router(tickers.router)
 app.include_router(news_router)
 app.include_router(email_update_router)
+app.include_router(users_router)
