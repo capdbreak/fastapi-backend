@@ -29,17 +29,20 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
             status_code=400, detail="날짜 형식은 YYYY-MM-DD 이어야 합니다."
         )
 
-    articles = (
-        db.query(NewsArticle)
+    # Use LEFT JOIN to get both article and LLM data in one query
+    results = (
+        db.query(NewsArticle, LLMNews)
+        .outerjoin(LLMNews, NewsArticle.id == LLMNews.id)
         .filter(NewsArticle.ticker == ticker, NewsArticle.date == parsed_date)
         .order_by(NewsArticle.id.asc())
         .all()
     )
 
     responses = []
-    for article in articles:
-        llm = db.query(LLMNews).filter(LLMNews.id == article.id).first()
-
+    for article, llm in results:
+        # Prioritize LLM summary over article summary
+        summary = llm.summary if llm and llm.summary else article.summary
+        
         response = NewsResponse(
             id=article.id,
             ticker=article.ticker,
@@ -47,7 +50,7 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
             title=article.title,
             article=article.article,
             real_url=article.real_url,
-            summary=article.summary,
+            summary=summary,
             subject=llm.subject if llm else None,
             valence=llm.valence if llm else None,
             arousal=llm.arousal if llm else None,
@@ -59,17 +62,20 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
 
 @router.get("/{ticker}", response_model=list[NewsResponse])
 def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
-    articles = (
-        db.query(NewsArticle)
+    # Use LEFT JOIN to get both article and LLM data in one query
+    results = (
+        db.query(NewsArticle, LLMNews)
+        .outerjoin(LLMNews, NewsArticle.id == LLMNews.id)
         .filter(NewsArticle.ticker == ticker)
         .order_by(NewsArticle.date.desc(), NewsArticle.id.asc())
         .all()
     )
 
     responses = []
-    for article in articles:
-        llm = db.query(LLMNews).filter(LLMNews.id == article.id).first()
-
+    for article, llm in results:
+        # Prioritize LLM summary over article summary
+        summary = llm.summary if llm and llm.summary else article.summary
+        
         response = NewsResponse(
             id=article.id,
             ticker=article.ticker,
@@ -77,7 +83,7 @@ def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
             title=article.title,
             article=article.article,
             real_url=article.real_url,
-            summary=article.summary,
+            summary=summary,
             subject=llm.subject if llm else None,
             valence=llm.valence if llm else None,
             arousal=llm.arousal if llm else None,
