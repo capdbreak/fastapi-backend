@@ -11,12 +11,19 @@ from app.routers.news import router as news_router
 from app.mail import send_newsletter
 
 import app.create_tables
-
+import asyncio
+import logging
+logging.basicConfig(level=logging.INFO)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --- startup ---
-    await send_newsletter()
+    async def run_newsletter():
+        try:
+            await send_newsletter()
+        except Exception as e:
+            logging.error(f"Newsletter error: {e}")
+
+    asyncio.create_task(run_newsletter())  # doesn't block startup
     yield
 
 
