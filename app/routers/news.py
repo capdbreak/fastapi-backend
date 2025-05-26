@@ -32,16 +32,15 @@ def get_news_by_ticker_and_date(ticker: str, date: str, db: Session = Depends(ge
     # Use LEFT JOIN to get both article and LLM data in one query
     results = (
         db.query(NewsArticle, LLMNews)
-        .outerjoin(LLMNews, NewsArticle.id == LLMNews.id)
-        .filter(NewsArticle.ticker == ticker, NewsArticle.date == parsed_date)
+        .outerjoin(LLMNews, NewsArticle.id == LLMNews.id)        .filter(NewsArticle.ticker == ticker, NewsArticle.date == parsed_date)
         .order_by(NewsArticle.id.asc())
         .all()
     )
 
     responses = []
     for article, llm in results:
-        # Prioritize LLM summary over article summary
-        summary = llm.summary if llm and llm.summary else article.summary
+        # Only LLM has summary, article doesn't have summary field
+        summary = llm.summary if llm else None
         
         response = NewsResponse(
             id=article.id,
@@ -65,16 +64,15 @@ def get_news_by_ticker(ticker: str, db: Session = Depends(get_db)):
     # Use LEFT JOIN to get both article and LLM data in one query
     results = (
         db.query(NewsArticle, LLMNews)
-        .outerjoin(LLMNews, NewsArticle.id == LLMNews.id)
-        .filter(NewsArticle.ticker == ticker)
+        .outerjoin(LLMNews, NewsArticle.id == LLMNews.id)        .filter(NewsArticle.ticker == ticker)
         .order_by(NewsArticle.date.desc(), NewsArticle.id.asc())
         .all()
     )
 
     responses = []
     for article, llm in results:
-        # Prioritize LLM summary over article summary
-        summary = llm.summary if llm and llm.summary else article.summary
+        # Only LLM has summary, article doesn't have summary field
+        summary = llm.summary if llm else None
         
         response = NewsResponse(
             id=article.id,

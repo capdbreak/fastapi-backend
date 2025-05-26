@@ -68,7 +68,6 @@ class NewsArticle(Base):
     title = Column(String)
     article = Column(Text)
     real_url = Column(String)
-    summary = Column(Text)
 
     __table_args__ = (UniqueConstraint("real_url", "title", name="uq_realurl_title"),)
 
