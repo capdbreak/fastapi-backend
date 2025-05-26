@@ -236,8 +236,7 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
 
 db = get_db()
 
-#@repeat_at(cron="0 0 * * *", raise_exceptions=True)
-@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
+@repeat_at(cron="0 0 * * *", raise_exceptions=True)
 async def send_newsletter():
     """
     사용자들에게 개인화된 뉴스레터를 발송합니다.
@@ -252,7 +251,7 @@ async def send_newsletter():
                 html_body = build_email_body(user.name, summaries)
                 fm = FastMail(conf)
                 message = MessageSchema(
-                    subject=f'📈 {user.name}님을 위한 {datetime.now().strftime("%m월 %d일")} 투데이 뉴스레터',
+                    subject=f'{datetime.now().strftime("%m월 %d일")} FinanceFlow 뉴스레터',
                     recipients=[user.email],
                     body=html_body,
                     subtype=MessageType.html,
