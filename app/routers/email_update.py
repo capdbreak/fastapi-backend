@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/settings", tags=["settings"])
 
 @router.post("/newsletter", summary="뉴스 레터 구독 설정")
 async def set_email_update(
-    email_opt_in: bool, 
+    email_opt_in: bool = Body(..., description="뉴스레터 구독 여부"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
