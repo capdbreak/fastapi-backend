@@ -46,7 +46,7 @@ async def get_summaries_for_user(user: User, db: Session) -> List[Dict]:
                 {
                     "ticker": ticker,
                     "title": article.title,
-                    "summary": article.summary,
+                    "summary": llm_news.summary,
                     "importance": llm_news.importance,
                     "arousal": llm_news.arousal,
                     "valence": llm_news.valence,
