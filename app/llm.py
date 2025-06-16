@@ -50,6 +50,7 @@ async def get_summaries_for_user(user: User, db: Session) -> List[Dict]:
                     "importance": llm_news.importance,
                     "arousal": llm_news.arousal,
                     "valence": llm_news.valence,
+                    "real_url": article.real_url
                 }
             )
 

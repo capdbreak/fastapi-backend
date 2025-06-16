@@ -207,7 +207,7 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
         html_content += f"""
                 <div class="news-item">
                     <div class="ticker">{item['ticker']}</div>
-                    <div class="news-title">{item['title']}</div>
+                    <div class="news-title"><a href="{item['real_url']}">{item['title']}</a></div>
                     <div class="news-summary">
                         <strong>📝 요약:</strong><br>
                         {item['summary']}
@@ -236,7 +236,8 @@ def build_email_body(user_name: str, summaries: list[dict]) -> str:
 
 db = get_db()
 
-@repeat_at(cron="0 0 * * *", raise_exceptions=True)
+#@repeat_at(cron="0 0 * * *", raise_exceptions=True)
+@repeat_every(seconds=60 * 60 * 24, raise_exceptions=True)
 async def send_newsletter():
     """
     사용자들에게 개인화된 뉴스레터를 발송합니다.
